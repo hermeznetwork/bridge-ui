@@ -272,7 +272,6 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
   const chainId = selectedChains.from.key;
 
   let symbol = token.symbol;
-  let logoURI = token.logoURI;
 
   if (chainId !== "ethereum" && token.symbol === "ETH") {
     symbol = "SkpGPT";
@@ -307,7 +306,6 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
         </div>
         <div className={`${classes.row} ${classes.middleRow}`}>
           <button className={classes.tokenSelector} onClick={onTokenDropdownClick} type="button">
-            <Icon isRounded size={24} url={logoURI} />
             <Typography type="h2">{symbol}</Typography>
             <CaretDown />
           </button>
