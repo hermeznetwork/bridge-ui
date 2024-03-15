@@ -148,8 +148,8 @@ export const getEtherToken = (chain: Chain): Token => {
     chainId: chain.chainId,
     decimals: 18,
     logoURI: ETH_TOKEN_LOGO_URI,
-    name: "SkpGPT",
-    symbol: "SkpGPT",
+    name: "ETH",
+    symbol: "ETH",
   };
 };
 

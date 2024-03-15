@@ -7,14 +7,16 @@ import { isAsyncTaskDataAvailable } from "src/utils/types";
 import { Spinner } from "src/views/shared/spinner/spinner.view";
 import { useTokenBalanceStyles } from "src/views/shared/token-balance/token-balance.styles";
 import { Typography, TypographyProps } from "src/views/shared/typography/typography.view";
+import { symbol } from "zod";
 
 interface TokenBalanceProps {
+  chainId: string;
   spinnerSize: number;
   token: Token;
   typographyProps: TypographyProps;
 }
 
-export const TokenBalance: FC<TokenBalanceProps> = ({ spinnerSize, token, typographyProps }) => {
+export const TokenBalance: FC<TokenBalanceProps> = ({ chainId, spinnerSize, token, typographyProps }) => {
   const classes = useTokenBalanceStyles();
   const loader = (
     <div className={classes.loader}>
@@ -22,6 +24,13 @@ export const TokenBalance: FC<TokenBalanceProps> = ({ spinnerSize, token, typogr
       <Typography {...typographyProps}>&nbsp;{token.symbol}</Typography>
     </div>
   );
+
+  let symbol = token.symbol;
+
+
+  if (chainId !== "ethereum" && token.symbol === "ETH") {
+    symbol = "SkpGPT";
+  }
 
   if (!token.balance) {
     return loader;
@@ -41,7 +50,7 @@ export const TokenBalance: FC<TokenBalanceProps> = ({ spinnerSize, token, typogr
       );
 
       return (
-        <Typography {...typographyProps}>{`${formattedTokenAmount} ${token.symbol}`}</Typography>
+        <Typography {...typographyProps}>{`${formattedTokenAmount} ${symbol}`}</Typography>
       );
     }
   }

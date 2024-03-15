@@ -243,8 +243,7 @@ export const TokenList: FC<TokenListProps> = ({
                     role="button"
                   >
                     <div className={classes.tokenInfoWithBalance}>
-                      <Icon className={classes.tokenIcon} isRounded size={24} url={token.logoURI} />
-                      <Typography type="body1">{token.name}</Typography>
+                      <Typography type="body1">{token.name === "ETH" ? "Native Token" : token.name}</Typography>
                       <div className={classes.tokenBalanceWrapper}>
                         <TokenBalance
                           spinnerSize={16}

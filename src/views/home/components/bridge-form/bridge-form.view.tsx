@@ -268,6 +268,16 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
       </div>
     );
   }
+  
+  const chainId = selectedChains.from.key;
+
+  let symbol = token.symbol;
+  let logoURI = token.logoURI;
+
+  if (chainId !== "ethereum" && token.symbol === "ETH") {
+    symbol = "SkpGPT";
+  }
+
 
   return (
     <form className={classes.form} onSubmit={onFormSubmit}>
@@ -288,6 +298,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
           <div className={classes.rightBox}>
             <Typography type="body2">Balance</Typography>
             <TokenBalance
+              chainId={selectedChains.from.key}
               spinnerSize={14}
               token={{ ...token, balance: balanceFrom }}
               typographyProps={{ type: "body1" }}
@@ -296,8 +307,8 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
         </div>
         <div className={`${classes.row} ${classes.middleRow}`}>
           <button className={classes.tokenSelector} onClick={onTokenDropdownClick} type="button">
-            <Icon isRounded size={24} url={token.logoURI} />
-            <Typography type="h2">{token.symbol}</Typography>
+            <Icon isRounded size={24} url={logoURI} />
+            <Typography type="h2">{symbol}</Typography>
             <CaretDown />
           </button>
           <AmountInput
@@ -327,6 +338,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
           <div className={classes.rightBox}>
             <Typography type="body2">Balance</Typography>
             <TokenBalance
+              chainId={selectedChains.to.key}
               spinnerSize={14}
               token={{ ...token, balance: balanceTo }}
               typographyProps={{ type: "body1" }}
