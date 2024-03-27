@@ -29,7 +29,7 @@ export const TokenBalance: FC<TokenBalanceProps> = ({ chainId, spinnerSize, toke
 
 
   if (chainId !== "ethereum" && token.symbol === "ETH") {
-    symbol = "FRAC";
+    symbol = "PAMBO";
   }
 
   if (!token.balance) {
