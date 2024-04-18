@@ -83,5 +83,6 @@ docker run \
 -e ENABLE_OUTDATED_NETWORK_MODAL=false \
 -e ENABLE_DEPOSIT_WARNING=true \
 -e ENABLE_REPORT_FORM=false \
+-e RESOLVE_RELATIVE_URLS=false \
 -p 8080:80 zkevm-bridge-ui:local
 ```
