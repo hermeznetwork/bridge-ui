@@ -133,7 +133,7 @@ export const getChains = ({
       name: "Gemu Testnet",
       nativeCurrency: {
         decimals: 18,
-        name: "Gemu",
+        name: "Gemuchain",
         symbol: "GEMU",
       },
       networkId: polygonZkEVM.networkId,
