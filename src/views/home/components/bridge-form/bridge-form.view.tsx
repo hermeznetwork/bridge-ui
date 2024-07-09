@@ -19,7 +19,7 @@ import { Button } from "src/views/shared/button/button.view";
 import { Card } from "src/views/shared/card/card.view";
 import { ChainList } from "src/views/shared/chain-list/chain-list.view";
 import { ErrorMessage } from "src/views/shared/error-message/error-message.view";
-import { Icon } from "src/views/shared/icon/icon.view";
+// import { Icon } from "src/views/shared/icon/icon.view";
 import { Spinner } from "src/views/shared/spinner/spinner.view";
 import { TokenBalance } from "src/views/shared/token-balance/token-balance.view";
 import { Typography } from "src/views/shared/typography/typography.view";
