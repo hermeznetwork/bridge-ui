@@ -130,11 +130,11 @@ export const getChains = ({
       explorerUrl: polygonZkEVM.explorerUrl,
       Icon: PolygonZkEVMChainIcon,
       key: "polygon-zkevm",
-      name: "prism",
+      name: polygonZkEVMNetworkName,
       nativeCurrency: {
         decimals: 18,
-        name: "Lumia Token",
-        symbol: "LUMIA",
+        name: "Ether",
+        symbol: "ETH",
       },
       networkId: polygonZkEVM.networkId,
       provider: polygonZkEVMProvider,
@@ -148,7 +148,7 @@ export const getEtherToken = (chain: Chain): Token => {
     chainId: chain.chainId,
     decimals: 18,
     logoURI: ETH_TOKEN_LOGO_URI,
-    name: "ETH",
+    name: "Ether",
     symbol: "ETH",
   };
 };
