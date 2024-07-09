@@ -864,9 +864,7 @@ const BridgeProvider: FC<PropsWithChildren> = (props) => {
         }
       );
 
-      const isTokenNativeOfToChain = token.chainId === to.chainId;
-      const isMetadataRequired = !isTokenEther(token) && !isTokenNativeOfToChain;
-      const metadata = isMetadataRequired
+      const metadata = !isTokenEther(token)
         ? await getErc20TokenEncodedMetadata({ chain: from, token })
         : "0x";
 
@@ -884,7 +882,7 @@ const BridgeProvider: FC<PropsWithChildren> = (props) => {
             destinationAddress,
             amount,
             metadata,
-            isL2Claim ? { gasLimit: 1500000, gasPrice: 0 } : { gasLimit: 1500000 }
+            isL2Claim ? { gasLimit: 1500000, gasPrice: 0 } : { }
           )
           .then((txData) => {
             storage.addAccountPendingTx(account, env, {
