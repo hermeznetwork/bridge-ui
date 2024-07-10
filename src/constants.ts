@@ -1,9 +1,11 @@
 import { StaticJsonRpcProvider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 
+import { defaultAbiCoder } from "ethers/lib/utils";
 import { ReactComponent as EthChainIcon } from "src/assets/icons/chains/ethereum.svg";
 import { ReactComponent as PolygonZkEVMChainIcon } from "src/assets/icons/chains/polygon-zkevm.svg";
 import { Chain, Currency, EthereumChain, ProviderError, Token, ZkEVMChain } from "src/domain";
+import { Bridge__factory } from "src/types/contracts/bridge";
 import { ProofOfEfficiency__factory } from "src/types/contracts/proof-of-efficiency";
 import { getEthereumNetworkName } from "src/utils/labels";
 
@@ -101,12 +103,20 @@ export const getChains = ({
     ethereum.poeContractAddress,
     ethereumProvider
   );
+  const bridgeContract = Bridge__factory.connect(
+    polygonZkEVM.bridgeContractAddress,
+    polygonZkEVMProvider
+  );
 
   return Promise.all([
     ethereumProvider.getNetwork().catch(() => Promise.reject(ProviderError.Ethereum)),
     polygonZkEVMProvider.getNetwork().catch(() => Promise.reject(ProviderError.PolygonZkEVM)),
     poeContract.networkName().catch(() => Promise.reject(ProviderError.Ethereum)),
-  ]).then(([ethereumNetwork, polygonZkEVMNetwork, polygonZkEVMNetworkName]) => [
+    bridgeContract
+      .gasTokenMetadata()
+      .catch(() => Promise.reject(ProviderError.PolygonZkEVM))
+      .then((md) => getGasTokenMetadata(md)),
+  ]).then(([ethereumNetwork, polygonZkEVMNetwork, polygonZkEVMNetworkName, metadata]) => [
     {
       bridgeContractAddress: ethereum.bridgeContractAddress,
       chainId: ethereumNetwork.chainId,
@@ -132,9 +142,9 @@ export const getChains = ({
       key: "polygon-zkevm",
       name: polygonZkEVMNetworkName,
       nativeCurrency: {
-        decimals: 18,
-        name: "Ether",
-        symbol: "ETH",
+        decimals: metadata.decimals,
+        name: metadata.name,
+        symbol: metadata.symbol,
       },
       networkId: polygonZkEVM.networkId,
       provider: polygonZkEVMProvider,
@@ -142,14 +152,24 @@ export const getChains = ({
   ]);
 };
 
+const getGasTokenMetadata = (
+  metadata: string
+): { decimals: number; name: string; symbol: string } => {
+  const encoded =
+    metadata === "0x"
+      ? ["Ether", "ETH", 18]
+      : defaultAbiCoder.decode(["string", "string", "uint8"], metadata);
+  return { decimals: Number(encoded[2]), name: String(encoded[0]), symbol: String(encoded[1]) };
+};
+
 export const getEtherToken = (chain: Chain): Token => {
   return {
     address: ethers.constants.AddressZero,
     chainId: chain.chainId,
-    decimals: 18,
+    decimals: chain.nativeCurrency.decimals,
     logoURI: ETH_TOKEN_LOGO_URI,
-    name: "Ether",
-    symbol: "ETH",
+    name: chain.nativeCurrency.name,
+    symbol: chain.nativeCurrency.symbol,
   };
 };
 
