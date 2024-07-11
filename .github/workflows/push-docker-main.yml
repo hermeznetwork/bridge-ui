@@ -28,4 +28,4 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: gatewayfm/zkevm-bridge-ui-generic:eth
+          tags: gatewayfm/zkevm-bridge-ui-generic:0.0.15
