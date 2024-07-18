@@ -274,7 +274,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
   let symbol = token.symbol;
 
   if (chainId !== "ethereum" && token.symbol === "ETH") {
-    symbol = "tHP";
+    symbol = "GEMU";
   }
 
 
