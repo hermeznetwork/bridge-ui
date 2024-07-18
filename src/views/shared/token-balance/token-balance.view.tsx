@@ -28,7 +28,7 @@ export const TokenBalance: FC<TokenBalanceProps> = ({ chainId, spinnerSize, toke
 
 
   if (chainId !== "ethereum" && token.symbol === "ETH") {
-    symbol = "GEMU";
+    symbol = "GPT";
   }
 
   if (!token.balance) {
