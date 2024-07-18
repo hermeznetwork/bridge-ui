@@ -28,4 +28,4 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: gatewayfm/zkevm-bridge-ui-generic:gemuchain:0.0.1
+          tags: gatewayfm/zkevm-bridge-ui-generic:gemuchain-0.0.1
