@@ -103,53 +103,74 @@ export const getChains = ({
     ethereum.poeContractAddress,
     ethereumProvider
   );
-  const bridgeContract = Bridge__factory.connect(
+  const bridgeZkEVMContract = Bridge__factory.connect(
     polygonZkEVM.bridgeContractAddress,
     polygonZkEVMProvider
   );
+  // const bridgeEthereumContract = Bridge__factory.connect(
+  //   ethereum.bridgeContractAddress,
+  //   ethereumProvider
+  // );
 
   return Promise.all([
     ethereumProvider.getNetwork().catch(() => Promise.reject(ProviderError.Ethereum)),
     polygonZkEVMProvider.getNetwork().catch(() => Promise.reject(ProviderError.PolygonZkEVM)),
     poeContract.networkName().catch(() => Promise.reject(ProviderError.Ethereum)),
-    bridgeContract
+    bridgeZkEVMContract.gasTokenAddress().catch(() => Promise.reject(ProviderError.PolygonZkEVM)),
+    bridgeZkEVMContract.WETHToken().catch(() => Promise.reject(ProviderError.PolygonZkEVM)),
+    bridgeZkEVMContract
       .gasTokenMetadata()
       .catch(() => Promise.reject(ProviderError.PolygonZkEVM))
       .then((md) => getGasTokenMetadata(md)),
-  ]).then(([ethereumNetwork, polygonZkEVMNetwork, polygonZkEVMNetworkName, metadata]) => [
-    {
-      bridgeContractAddress: ethereum.bridgeContractAddress,
-      chainId: ethereumNetwork.chainId,
-      explorerUrl: ethereum.explorerUrl,
-      Icon: EthChainIcon,
-      key: "ethereum",
-      name: getEthereumNetworkName(ethereumNetwork.chainId),
-      nativeCurrency: {
-        decimals: 18,
-        name: "Ether",
-        symbol: "ETH",
+  ]).then(
+    ([
+      ethereumNetwork,
+      polygonZkEVMNetwork,
+      polygonZkEVMNetworkName,
+      gasToken,
+      wethToken,
+      metadata,
+    ]) => [
+      {
+        bridgeContractAddress: ethereum.bridgeContractAddress,
+        chainId: ethereumNetwork.chainId,
+        explorerUrl: ethereum.explorerUrl,
+        Icon: EthChainIcon,
+        key: "ethereum",
+        name: getEthereumNetworkName(ethereumNetwork.chainId),
+        nativeCurrency: {
+          decimals: 18,
+          name: "Ether",
+          symbol: "ETH",
+          wrapped: !isZeroAddress(wethToken)
+            ? { address: wethToken, chainId: polygonZkEVMNetwork.chainId }
+            : undefined,
+        },
+        networkId: 0,
+        poeContractAddress: ethereum.poeContractAddress,
+        provider: ethereumProvider,
+        rollupManagerAddress: ethereum.rollupManagerAddress,
       },
-      networkId: 0,
-      poeContractAddress: ethereum.poeContractAddress,
-      provider: ethereumProvider,
-      rollupManagerAddress: ethereum.rollupManagerAddress,
-    },
-    {
-      bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
-      chainId: polygonZkEVMNetwork.chainId,
-      explorerUrl: polygonZkEVM.explorerUrl,
-      Icon: PolygonZkEVMChainIcon,
-      key: "polygon-zkevm",
-      name: polygonZkEVMNetworkName,
-      nativeCurrency: {
-        decimals: metadata.decimals,
-        name: metadata.name,
-        symbol: metadata.symbol,
+      {
+        bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
+        chainId: polygonZkEVMNetwork.chainId,
+        explorerUrl: polygonZkEVM.explorerUrl,
+        Icon: PolygonZkEVMChainIcon,
+        key: "polygon-zkevm",
+        name: polygonZkEVMNetworkName,
+        nativeCurrency: {
+          decimals: metadata.decimals,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          wrapped: !isZeroAddress(gasToken)
+            ? { address: gasToken, chainId: ethereumNetwork.chainId }
+            : undefined,
+        },
+        networkId: polygonZkEVM.networkId,
+        provider: polygonZkEVMProvider,
       },
-      networkId: polygonZkEVM.networkId,
-      provider: polygonZkEVMProvider,
-    },
-  ]);
+    ]
+  );
 };
 
 const getGasTokenMetadata = (
@@ -162,6 +183,10 @@ const getGasTokenMetadata = (
   return { decimals: Number(encoded[2]), name: String(encoded[0]), symbol: String(encoded[1]) };
 };
 
+const isZeroAddress = (address: string) => {
+  return address === ethers.constants.AddressZero;
+};
+
 export const getEtherToken = (chain: Chain): Token => {
   return {
     address: ethers.constants.AddressZero,
@@ -170,6 +195,7 @@ export const getEtherToken = (chain: Chain): Token => {
     logoURI: ETH_TOKEN_LOGO_URI,
     name: chain.nativeCurrency.name,
     symbol: chain.nativeCurrency.symbol,
+    wrappedToken: chain.nativeCurrency.wrapped ? chain.nativeCurrency.wrapped : undefined,
   };
 };
 
