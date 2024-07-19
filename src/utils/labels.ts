@@ -30,6 +30,9 @@ export function getEthereumNetworkName(chainId: number): string {
     case EthereumChainId.GOERLI: {
       return "Goerli Testnet";
     }
+    case EthereumChainId.SEPOLIA: {
+      return "Sepolia Testnet";
+    }
     default: {
       return "Ethereum";
     }
