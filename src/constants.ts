@@ -121,7 +121,7 @@ export const getChains = ({
     bridgeZkEVMContract
       .gasTokenMetadata()
       .catch(() => Promise.reject(ProviderError.PolygonZkEVM))
-      .then((md) => getGasTokenMetadata(md)),
+      .then((md) => decodeGasTokenMetadata(md)),
   ]).then(
     ([
       ethereumNetwork,
@@ -142,9 +142,7 @@ export const getChains = ({
           decimals: 18,
           name: "Ether",
           symbol: "ETH",
-          wrapped: !isZeroAddress(wethToken)
-            ? { address: wethToken, chainId: polygonZkEVMNetwork.chainId }
-            : undefined,
+          wrapped: { address: wethToken, chainId: polygonZkEVMNetwork.chainId },
         },
         networkId: 0,
         poeContractAddress: ethereum.poeContractAddress,
@@ -162,9 +160,7 @@ export const getChains = ({
           decimals: metadata.decimals,
           name: metadata.name,
           symbol: metadata.symbol,
-          wrapped: !isZeroAddress(gasToken)
-            ? { address: gasToken, chainId: ethereumNetwork.chainId }
-            : undefined,
+          wrapped: { address: gasToken, chainId: ethereumNetwork.chainId },
         },
         networkId: polygonZkEVM.networkId,
         provider: polygonZkEVMProvider,
@@ -173,7 +169,7 @@ export const getChains = ({
   );
 };
 
-const getGasTokenMetadata = (
+const decodeGasTokenMetadata = (
   metadata: string
 ): { decimals: number; name: string; symbol: string } => {
   const encoded =
@@ -181,10 +177,6 @@ const getGasTokenMetadata = (
       ? ["Ether", "ETH", 18]
       : defaultAbiCoder.decode(["string", "string", "uint8"], metadata);
   return { decimals: Number(encoded[2]), name: String(encoded[0]), symbol: String(encoded[1]) };
-};
-
-const isZeroAddress = (address: string) => {
-  return address === ethers.constants.AddressZero;
 };
 
 export const getEtherToken = (chain: Chain): Token => {
@@ -195,7 +187,22 @@ export const getEtherToken = (chain: Chain): Token => {
     logoURI: ETH_TOKEN_LOGO_URI,
     name: chain.nativeCurrency.name,
     symbol: chain.nativeCurrency.symbol,
-    wrappedToken: chain.nativeCurrency.wrapped ? chain.nativeCurrency.wrapped : undefined,
+    wrappedToken: chain.nativeCurrency.wrapped,
+  };
+};
+
+export const getGasToken = (chain: Chain): Token => {
+  if (chain.key == "ethereum") {
+    return getEtherToken(chain);
+  }
+  return {
+    address: chain.nativeCurrency.wrapped.address,
+    chainId: chain.nativeCurrency.wrapped.chainId,
+    decimals: chain.nativeCurrency.decimals,
+    logoURI: ETH_TOKEN_LOGO_URI,
+    name: chain.nativeCurrency.name,
+    symbol: chain.nativeCurrency.symbol,
+    wrappedToken: { address: ethers.constants.AddressZero, chainId: chain.chainId },
   };
 };
 

@@ -276,7 +276,8 @@ export const BridgeDetails: FC = () => {
       const { step1: step1EthFee, step2: step2EthFee } = ethFees;
       const { step1: step1FiatFee, step2: step2FiatFee } = fiatFees;
 
-      const ethToken = getEtherToken(from);
+      const ethTokenFrom = getEtherToken(from);
+      const ethTokenTo = getEtherToken(to)
 
       if (env === undefined) {
         return null;
@@ -288,12 +289,12 @@ export const BridgeDetails: FC = () => {
         ? `${currencySymbol}${fiatAmount ? formatFiatAmount(fiatAmount) : "--"}`
         : undefined;
 
-      const step1FeeString = `${step1EthFee ? formatTokenAmount(step1EthFee, ethToken) : "--"} ETH`;
+      const step1FeeString = `${step1EthFee ? formatTokenAmount(step1EthFee, ethTokenFrom) : "--"} ${ethTokenFrom.symbol}`;
       const step1FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step1FiatFee ? formatFiatAmount(step1FiatFee) : "--"}`
         : undefined;
 
-      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, ethToken) : "--"} ETH`;
+      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, ethTokenTo) : "--"} ${ethTokenTo.symbol}`;
       const step2FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step2FiatFee ? formatFiatAmount(step2FiatFee) : "--"}`
         : undefined;

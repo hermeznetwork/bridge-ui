@@ -15,7 +15,7 @@ export interface CommonChain {
     decimals: number;
     name: string;
     symbol: string;
-    wrapped?: {
+    wrapped: {
       address: string;
       chainId: number;
     };

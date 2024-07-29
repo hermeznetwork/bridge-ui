@@ -694,7 +694,7 @@ const BridgeProvider: FC<PropsWithChildren> = (props) => {
 
       const contract = Bridge__factory.connect(from.bridgeContractAddress, from.provider);
       const amount = BigNumber.from(0);
-      const overrides: CallOverrides = isTokenEther(token)
+      const overrides: CallOverrides = isTokenEther(token,from)
         ? { from: destinationAddress, value: amount }
         : { from: destinationAddress };
 
@@ -770,7 +770,7 @@ const BridgeProvider: FC<PropsWithChildren> = (props) => {
       const { account, chainId, provider } = connectedProvider.data;
       const contract = Bridge__factory.connect(from.bridgeContractAddress, provider.getSigner());
       const overrides: CallOverrides = {
-        value: isTokenEther(token) ? amount : undefined,
+        value: isTokenEther(token, from) ? amount : undefined,
         ...(gas
           ? gas.data
           : (await estimateBridgeGas({ destinationAddress, from, to, token, tokenSpendPermission }))
@@ -868,7 +868,7 @@ const BridgeProvider: FC<PropsWithChildren> = (props) => {
         }
       );
 
-      const metadata = !isTokenEther(token)
+      const metadata = token.symbol !== "ETH"
         ? await getErc20TokenEncodedMetadata({ chain: from, token })
         : "0x";
 
