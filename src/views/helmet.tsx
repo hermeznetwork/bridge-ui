@@ -15,11 +15,15 @@ export const AppHead = () => {
       {env?.faviconPath ? (
         <link href={env.faviconPath} rel="icon" type="image/svg+xml" />
       ) : (
-        <link href="/favicon.ico" rel="icon" type="image/svg+xml" />
+        <link href="/faviconZkEVM.ico" rel="icon" type="image/svg+xml" />
       )}
       <link href="/logo192.png" rel="apple-touch-icon" />
       <link href="/manifest.json" rel="manifest" />
-      <title>GPT</title>
+      {env?.networkName ? (
+        <title>{env.networkName} Bridge</title>
+      ) : (
+        <title>Polygon zkEVM Bridge</title>
+      )}
     </Helmet>
   );
 };

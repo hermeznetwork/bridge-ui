@@ -297,12 +297,13 @@ const getErc20TokenMetadata = async ({
   name: string;
   symbol: string;
 }> => {
-  if (selectTokenAddress(token,chain) === ethersConstants.AddressZero)
-  return {
-    decimals: token.decimals,
-    name: token.name,
-    symbol: token.symbol,
-  };
+  if (selectTokenAddress(token, chain) === ethersConstants.AddressZero) {
+    return {
+      decimals: token.decimals,
+      name: token.name,
+      symbol: token.symbol,
+    };
+  }
 
   const erc20Contract = Erc20__factory.connect(selectTokenAddress(token, chain), chain.provider);
   const [name, symbol, decimals] = await Promise.all([
