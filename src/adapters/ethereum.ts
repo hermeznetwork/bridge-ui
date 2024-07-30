@@ -56,7 +56,7 @@ interface GetPermitParams {
 }
 
 const getPermit = ({ chain, token }: GetPermitParams): Promise<Permit> => {
-  if (isTokenEther(token)) {
+  if (isTokenEther(token, chain)) {
     return Promise.reject(new Error("Native currency does't require permit"));
   }
   const contract = Erc20__factory.connect(selectTokenAddress(token, chain), chain.provider);
@@ -106,7 +106,7 @@ const approve = async ({
   spender,
   token,
 }: ApproveParams): Promise<void> => {
-  if (isTokenEther(token)) {
+  if (isTokenEther(token, from)) {
     throw new Error("Cannot perform an approve on ETH");
   }
 
@@ -147,7 +147,7 @@ const isContractAllowedToSpendToken = async ({
   spender,
   token,
 }: IsContractAllowedToSpendTokenParams): Promise<boolean> => {
-  if (isTokenEther(token)) {
+  if (isTokenEther(token, from)) {
     throw new Error("Cannot check the allowance of ETH");
   }
 
@@ -176,7 +176,7 @@ const permit = async ({
   token,
   value,
 }: PermitParams): Promise<string> => {
-  if (isTokenEther(token)) {
+  if (isTokenEther(token, from)) {
     throw new Error("Cannot perform a permit on ETH");
   }
 
@@ -297,6 +297,14 @@ const getErc20TokenMetadata = async ({
   name: string;
   symbol: string;
 }> => {
+  if (selectTokenAddress(token, chain) === ethersConstants.AddressZero) {
+    return {
+      decimals: token.decimals,
+      name: token.name,
+      symbol: token.symbol,
+    };
+  }
+
   const erc20Contract = Erc20__factory.connect(selectTokenAddress(token, chain), chain.provider);
   const [name, symbol, decimals] = await Promise.all([
     erc20Contract.name(),

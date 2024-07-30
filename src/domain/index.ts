@@ -15,6 +15,10 @@ export interface CommonChain {
     decimals: number;
     name: string;
     symbol: string;
+    wrapped: {
+      address: string;
+      chainId: number;
+    };
   };
   networkId: number;
   provider: JsonRpcProvider;
@@ -69,7 +73,7 @@ export interface ReportFormEnvEnabled {
 export interface Env {
   bridgeApiUrl: string;
   chains: [EthereumChain, ZkEVMChain];
-  faviconPath: string;
+  faviconPath?: string;
   fiatExchangeRates:
     | {
         areEnabled: false;
@@ -82,7 +86,7 @@ export interface Env {
       };
   forceUpdateGlobalExitRootForL1: boolean;
   isDepositWarningEnabled: boolean;
-  logoPath: string;
+  logoPath?: string;
   networkName?: string;
   networkSymbol?: string;
   outdatedNetworkModal:

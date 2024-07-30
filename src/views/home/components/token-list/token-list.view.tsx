@@ -53,7 +53,7 @@ export const TokenList: FC<TokenListProps> = ({
 
   const getTokenBalance = useCallback(
     (token: Token, chain: Chain): Promise<BigNumber> => {
-      if (isTokenEther(token)) {
+      if (isTokenEther(token,chain)) {
         return chain.provider.getBalance(account);
       } else {
         return getErc20TokenBalance({

@@ -92,7 +92,7 @@ export const BridgeConfirmation: FC = () => {
           }
 
           const newMaxAmountConsideringFee = (() => {
-            if (isTokenEther(token)) {
+            if (isTokenEther(token, from)) {
               const amountConsideringFee = amount.add(newFee);
               const tokenBalanceRemainder = amountConsideringFee.sub(tokenBalance);
               const doesAmountExceedsTokenBalance = tokenBalanceRemainder.isNegative();
@@ -142,7 +142,7 @@ export const BridgeConfirmation: FC = () => {
     } else if (formData && connectedProvider.status === "successful") {
       const { from, token } = formData;
 
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, from)) {
         void from.provider
           .getBalance(connectedProvider.data.account)
           .then((balance) =>
@@ -180,7 +180,7 @@ export const BridgeConfirmation: FC = () => {
     if (connectedProvider.status === "successful" && formData) {
       const { amount, from, token } = formData;
 
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, from)) {
         setTokenSpendPermission({ type: "none" });
       } else {
         isContractAllowedToSpendToken({
@@ -242,7 +242,7 @@ export const BridgeConfirmation: FC = () => {
         .then((etherPrice) => {
           callIfMounted(() => {
             setEtherTokenFiatPrice(etherPrice);
-            if (isTokenEther(token)) {
+            if (isTokenEther(token, from)) {
               setBridgedTokenFiatPrice(etherPrice);
             }
           });
@@ -250,14 +250,14 @@ export const BridgeConfirmation: FC = () => {
         .catch(() =>
           callIfMounted(() => {
             setEtherTokenFiatPrice(undefined);
-            if (isTokenEther(token)) {
+            if (isTokenEther(token, from)) {
               setBridgedTokenFiatPrice(undefined);
             }
           })
         );
 
       // Get the fiat price of the bridged token when it's not Ether
-      if (!isTokenEther(token)) {
+      if (!isTokenEther(token, from)) {
         getTokenPrice({ chain: from, token })
           .then((tokenPrice) => {
             callIfMounted(() => {

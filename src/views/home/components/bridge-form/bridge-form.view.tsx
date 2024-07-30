@@ -10,7 +10,7 @@ import { useProvidersContext } from "src/contexts/providers.context";
 import { useTokensContext } from "src/contexts/tokens.context";
 import { AsyncTask, Chain, FormData, Token } from "src/domain";
 import { useCallIfMounted } from "src/hooks/use-call-if-mounted";
-import { isTokenEther, selectTokenAddress } from "src/utils/tokens";
+import { isTokenEther, isWETH, selectTokenAddress } from "src/utils/tokens";
 import { isAsyncTaskDataAvailable } from "src/utils/types";
 import { AmountInput } from "src/views/home/components/amount-input/amount-input.view";
 import { useBridgeFormStyles } from "src/views/home/components/bridge-form/bridge-form.styles";
@@ -124,7 +124,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
 
   const getTokenBalance = useCallback(
     (token: Token, chain: Chain): Promise<BigNumber> => {
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, chain)) {
         return chain.provider.getBalance(account);
       } else {
         return getErc20TokenBalance({
@@ -269,15 +269,8 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
     );
   }
   
-  const chainId = selectedChains.from.key;
 
-  let symbol = token.symbol;
-
-  if (chainId !== "ethereum" && token.symbol === "ETH") {
-    symbol = "GPT";
-  }
-
-
+  const symbol = isWETH(token, selectedChains.from.key) ? "WETH" : token.symbol;
   return (
     <form className={classes.form} onSubmit={onFormSubmit}>
       <Card className={classes.card}>

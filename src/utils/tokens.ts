@@ -8,8 +8,20 @@ const selectTokenAddress = (token: Token, chain: Chain): string => {
     : token.address;
 };
 
-const isTokenEther = (token: Token): boolean => {
-  return token.address === ethersConstants.AddressZero;
+const isTokenEther = (token: Token, chain: Chain): boolean => {
+  if (token.chainId == chain.chainId) {
+    return token.address === ethersConstants.AddressZero;
+  } else {
+    return token.wrappedToken?.address === ethersConstants.AddressZero;
+  }
 };
 
-export { isTokenEther, selectTokenAddress };
+const isWETH = (token: Token, chainId: string): boolean => {
+  if (chainId !== "ethereum" && token.symbol === "ETH" && token.wrappedToken) {
+    return token.wrappedToken.address !== ethersConstants.AddressZero;
+  } else {
+    return false;
+  }
+};
+
+export { isTokenEther, selectTokenAddress, isWETH };

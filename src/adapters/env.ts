@@ -16,11 +16,11 @@ interface Env {
   VITE_ETHEREUM_PROOF_OF_EFFICIENCY_CONTRACT_ADDRESS: string;
   VITE_ETHEREUM_ROLLUP_MANAGER_ADDRESS: string;
   VITE_ETHEREUM_RPC_URL: string;
-  VITE_FAVICON_PATH: string;
+  VITE_FAVICON_PATH?: string;
   VITE_FIAT_EXCHANGE_RATES_API_KEY?: string;
   VITE_FIAT_EXCHANGE_RATES_API_URL?: string;
   VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS?: string;
-  VITE_LOGO_PATH: string;
+  VITE_LOGO_PATH?: string;
   VITE_NETWORK_NAME?: string;
   VITE_NETWORK_SYMBOL?: string;
   VITE_OUTDATED_NETWORK_MODAL_MESSAGE_PARAGRAPH_1?: string;
@@ -278,11 +278,11 @@ const envParser = StrictSchema<Env, domain.Env>()(
       VITE_ETHEREUM_PROOF_OF_EFFICIENCY_CONTRACT_ADDRESS: z.string().length(42),
       VITE_ETHEREUM_ROLLUP_MANAGER_ADDRESS: z.string().length(42),
       VITE_ETHEREUM_RPC_URL: z.string().url(),
-      VITE_FAVICON_PATH: z.string(),
+      VITE_FAVICON_PATH: z.string().optional(),
       VITE_FIAT_EXCHANGE_RATES_API_KEY: z.string().optional(),
       VITE_FIAT_EXCHANGE_RATES_API_URL: z.string().url().optional(),
       VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS: z.string().length(42).optional(),
-      VITE_LOGO_PATH: z.string(),
+      VITE_LOGO_PATH: z.string().optional(),
       VITE_NETWORK_NAME: z.string().optional(),
       VITE_NETWORK_SYMBOL: z.string().optional(),
       VITE_OUTDATED_NETWORK_MODAL_MESSAGE_PARAGRAPH_1: z.string().optional(),

@@ -57,10 +57,10 @@ export const TokenInfoTable: FC<TokenInfoTableProps> = ({ className, token }) =>
     </div>
   );
 
-  if (isTokenEther(token)) {
-    const ethereum = env.chains[0];
-    const polygonZkEVM = env.chains[1];
-
+  const ethereum = env.chains[0];
+  const polygonZkEVM = env.chains[1];
+  
+  if (isTokenEther(token, ethereum)) {
     const ethereumRow = (
       <div className={classes.row}>
         <Typography className={classes.alignRow} type="body2">
@@ -80,7 +80,7 @@ export const TokenInfoTable: FC<TokenInfoTableProps> = ({ className, token }) =>
           L2 token address
         </Typography>
         <Typography className={classes.alignRow} type="body1">
-          {getShortenedEthereumAddress(ethersConstants.AddressZero)}
+          {getShortenedEthereumAddress(token.wrappedToken?.address ?? ethersConstants.AddressZero)}
         </Typography>
       </div>
     );
