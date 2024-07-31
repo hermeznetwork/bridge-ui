@@ -247,7 +247,7 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
       }
       const token = [
         ...getCustomTokens(),
-        ...(tokens || [getEtherToken(chain)]),
+        ...(tokens || [getGasToken(chain)]),
         ...fetchedTokens.current,
       ].find(
         (token) =>
@@ -322,12 +322,12 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
               .map((token) => addWrappedToken({ token }))
           )
             .then((chainTokens) => {
-              const tokens = [getEtherToken(ethereumChain)];
+              const tokens = [];
               const gasToken = getGasToken(polygonZkEVMChain)
               if (!isTokenEther(gasToken, ethereumChain)) {
                 tokens.push(gasToken)
               }
-              tokens.push(...chainTokens)
+              tokens.push(getEtherToken(ethereumChain), ...chainTokens)
               cleanupCustomTokens(tokens);
               setTokens(tokens);
             })
