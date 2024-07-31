@@ -2,6 +2,7 @@ import { StaticJsonRpcProvider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 
 import { defaultAbiCoder } from "ethers/lib/utils";
+import { L2Icon } from "./assets/network-icon";
 import { ReactComponent as EthChainIcon } from "src/assets/icons/chains/ethereum.svg";
 import { ReactComponent as PolygonZkEVMChainIcon } from "src/assets/icons/chains/polygon-zkevm.svg";
 import { Chain, Currency, EthereumChain, ProviderError, Token, ZkEVMChain } from "src/domain";
@@ -93,6 +94,7 @@ export const getChains = ({
   polygonZkEVM: {
     bridgeContractAddress: string;
     explorerUrl: string;
+    iconUrl?: string;
     networkId: number;
     rpcUrl: string;
   };
@@ -107,10 +109,6 @@ export const getChains = ({
     polygonZkEVM.bridgeContractAddress,
     polygonZkEVMProvider
   );
-  // const bridgeEthereumContract = Bridge__factory.connect(
-  //   ethereum.bridgeContractAddress,
-  //   ethereumProvider
-  // );
 
   return Promise.all([
     ethereumProvider.getNetwork().catch(() => Promise.reject(ProviderError.Ethereum)),
@@ -153,7 +151,7 @@ export const getChains = ({
         bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
         chainId: polygonZkEVMNetwork.chainId,
         explorerUrl: polygonZkEVM.explorerUrl,
-        Icon: PolygonZkEVMChainIcon,
+        Icon: polygonZkEVM.iconUrl ? L2Icon(polygonZkEVM.iconUrl) : PolygonZkEVMChainIcon,
         key: "polygon-zkevm",
         name: polygonZkEVMNetworkName,
         nativeCurrency: {
