@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { addCustomToken, getChainCustomTokens, removeCustomToken } from "src/adapters/storage";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as CaretDown } from "src/assets/icons/caret-down.svg";
-import { getEtherToken } from "src/constants";
+import { getGasToken } from "src/constants";
 import { useEnvContext } from "src/contexts/env.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { useTokensContext } from "src/contexts/tokens.context";
@@ -105,7 +105,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
         )
       );
       if (selectedChains && tokenToRemove.address === token?.address) {
-        setToken(getEtherToken(selectedChains.from));
+        setToken(getGasToken(selectedChains.from));
       }
     }
   };
@@ -141,7 +141,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
     // Load all the tokens for the selected chain without their balance
     if (selectedChains && defaultTokens) {
       const { from } = selectedChains;
-      const chainTokens = [...getChainCustomTokens(from), ...defaultTokens];
+      const chainTokens = [ ...defaultTokens, ...getChainCustomTokens(from)];
 
       setTokens(
         chainTokens.map((token) => ({
@@ -243,7 +243,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
 
       if (from && to) {
         setSelectedChains({ from, to });
-        setToken(getEtherToken(from));
+        setToken(getGasToken(from.key === "ethereum" ? to : from));
       }
       setAmount(undefined);
     }
