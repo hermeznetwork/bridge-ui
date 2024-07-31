@@ -20,6 +20,7 @@ interface Env {
   VITE_FIAT_EXCHANGE_RATES_API_KEY?: string;
   VITE_FIAT_EXCHANGE_RATES_API_URL?: string;
   VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS?: string;
+  VITE_ICON_PATH?: string;
   VITE_LOGO_PATH?: string;
   VITE_NETWORK_NAME?: string;
   VITE_NETWORK_SYMBOL?: string;
@@ -173,6 +174,7 @@ const envToDomain = ({
   VITE_FIAT_EXCHANGE_RATES_API_KEY,
   VITE_FIAT_EXCHANGE_RATES_API_URL,
   VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS,
+  VITE_ICON_PATH,
   VITE_LOGO_PATH,
   VITE_NETWORK_NAME,
   VITE_NETWORK_SYMBOL,
@@ -198,6 +200,7 @@ const envToDomain = ({
   );
   const bridgeApiUrl = VITE_BRIDGE_API_URL;
   const logoPath = VITE_LOGO_PATH;
+  const iconPath = VITE_ICON_PATH ?? logoPath;
   const faviconPath = VITE_FAVICON_PATH;
   const networkName = VITE_NETWORK_NAME;
   const networkSymbol = VITE_NETWORK_SYMBOL;
@@ -226,6 +229,7 @@ const envToDomain = ({
     polygonZkEVM: {
       bridgeContractAddress: VITE_POLYGON_ZK_EVM_BRIDGE_CONTRACT_ADDRESS,
       explorerUrl: VITE_POLYGON_ZK_EVM_EXPLORER_URL,
+      iconUrl: iconPath,
       networkId: polygonZkEVMNetworkId,
       rpcUrl: VITE_POLYGON_ZK_EVM_RPC_URL,
     },
@@ -282,6 +286,7 @@ const envParser = StrictSchema<Env, domain.Env>()(
       VITE_FIAT_EXCHANGE_RATES_API_KEY: z.string().optional(),
       VITE_FIAT_EXCHANGE_RATES_API_URL: z.string().url().optional(),
       VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS: z.string().length(42).optional(),
+      VITE_ICON_PATH: z.string().optional(),
       VITE_LOGO_PATH: z.string().optional(),
       VITE_NETWORK_NAME: z.string().optional(),
       VITE_NETWORK_SYMBOL: z.string().optional(),
