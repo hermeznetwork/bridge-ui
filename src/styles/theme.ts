@@ -17,8 +17,8 @@ export const theme = {
       veryDark: "#363740",
     },
     primary: {
-      dark: "#5a1cc3",
-      main: "#7b3fe4",
+      dark: "#58d404",
+      main: "#54dc04",
     },
     success: {
       light: "rgba(0,255,0,0.1)",
