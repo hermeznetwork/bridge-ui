@@ -7,7 +7,7 @@ import { parseError } from "src/adapters/error";
 import { getTxFeePaid } from "src/adapters/ethereum";
 import { getCurrency } from "src/adapters/storage";
 import { ReactComponent as NewWindowIcon } from "src/assets/icons/new-window.svg";
-import { FIAT_DISPLAY_PRECISION, getEtherToken } from "src/constants";
+import { FIAT_DISPLAY_PRECISION, getGasToken } from "src/constants";
 import { useBridgeContext } from "src/contexts/bridge.context";
 import { useEnvContext } from "src/contexts/env.context";
 import { useErrorContext } from "src/contexts/error.context";
@@ -276,7 +276,8 @@ export const BridgeDetails: FC = () => {
       const { step1: step1EthFee, step2: step2EthFee } = ethFees;
       const { step1: step1FiatFee, step2: step2FiatFee } = fiatFees;
 
-      const ethToken = getEtherToken(from);
+      const gasTokenFrom = getGasToken(from);
+      const gasTokenTo = getGasToken(to)
 
       if (env === undefined) {
         return null;
@@ -288,12 +289,12 @@ export const BridgeDetails: FC = () => {
         ? `${currencySymbol}${fiatAmount ? formatFiatAmount(fiatAmount) : "--"}`
         : undefined;
 
-      const step1FeeString = `${step1EthFee ? formatTokenAmount(step1EthFee, ethToken) : "--"} ETH`;
+      const step1FeeString = `${step1EthFee ? formatTokenAmount(step1EthFee, gasTokenFrom) : "--"} ${gasTokenFrom.symbol}`;
       const step1FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step1FiatFee ? formatFiatAmount(step1FiatFee) : "--"}`
         : undefined;
 
-      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, ethToken) : "--"} ETH`;
+      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, gasTokenTo) : "--"} ${gasTokenTo.symbol}`;
       const step2FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step2FiatFee ? formatFiatAmount(step2FiatFee) : "--"}`
         : undefined;

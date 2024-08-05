@@ -88,7 +88,11 @@ const PriceOracleProvider: FC<PropsWithChildren> = (props) => {
         throw new Error("Fiat exchange rates are not available");
       }
 
-      const erc20Token = isTokenEther(token) ? tokens?.find((t) => t.symbol === "WETH") : token;
+      const ethereumChain = env.chains.find((chain) => chain.key === "ethereum");
+      if (ethereumChain === undefined) {
+        throw new Error("Ethereum chain is not available");
+      }
+      const erc20Token = isTokenEther(token, ethereumChain) ? tokens?.find((t) => t.symbol === "WETH") : token;
 
       if (!erc20Token) {
         throw new Error(
@@ -96,11 +100,7 @@ const PriceOracleProvider: FC<PropsWithChildren> = (props) => {
         );
       }
 
-      const ethereumChain = env.chains.find((chain) => chain.key === "ethereum");
 
-      if (ethereumChain === undefined) {
-        throw new Error("Ethereum chain is not available");
-      }
 
       const uniswapPairContractAddress = computePairAddress({
         tokenA: erc20Token,

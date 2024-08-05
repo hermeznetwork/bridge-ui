@@ -53,7 +53,7 @@ export const TokenList: FC<TokenListProps> = ({
 
   const getTokenBalance = useCallback(
     (token: Token, chain: Chain): Promise<BigNumber> => {
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, chain)) {
         return chain.provider.getBalance(account);
       } else {
         return getErc20TokenBalance({
@@ -243,10 +243,10 @@ export const TokenList: FC<TokenListProps> = ({
                     role="button"
                   >
                     <div className={classes.tokenInfoWithBalance}>
-                      <Icon className={classes.tokenIcon} isRounded size={24} url={token.logoURI} />
-                      <Typography type="body1">{token.name}</Typography>
+                      <Typography type="body1">{token.name === "ETH" ? "Native Token" : token.name}</Typography>
                       <div className={classes.tokenBalanceWrapper}>
                         <TokenBalance
+                          chainId={chains.from.key}
                           spinnerSize={16}
                           token={token}
                           typographyProps={{ className: classes.tokenBalance, type: "body2" }}

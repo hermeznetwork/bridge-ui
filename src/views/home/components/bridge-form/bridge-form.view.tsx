@@ -4,13 +4,13 @@ import { FC, useCallback, useEffect, useState } from "react";
 import { addCustomToken, getChainCustomTokens, removeCustomToken } from "src/adapters/storage";
 import { ReactComponent as ArrowDown } from "src/assets/icons/arrow-down.svg";
 import { ReactComponent as CaretDown } from "src/assets/icons/caret-down.svg";
-import { getEtherToken } from "src/constants";
+import { getGasToken } from "src/constants";
 import { useEnvContext } from "src/contexts/env.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { useTokensContext } from "src/contexts/tokens.context";
 import { AsyncTask, Chain, FormData, Token } from "src/domain";
 import { useCallIfMounted } from "src/hooks/use-call-if-mounted";
-import { isTokenEther, selectTokenAddress } from "src/utils/tokens";
+import { isTokenEther, isWETH, selectTokenAddress } from "src/utils/tokens";
 import { isAsyncTaskDataAvailable } from "src/utils/types";
 import { AmountInput } from "src/views/home/components/amount-input/amount-input.view";
 import { useBridgeFormStyles } from "src/views/home/components/bridge-form/bridge-form.styles";
@@ -19,7 +19,7 @@ import { Button } from "src/views/shared/button/button.view";
 import { Card } from "src/views/shared/card/card.view";
 import { ChainList } from "src/views/shared/chain-list/chain-list.view";
 import { ErrorMessage } from "src/views/shared/error-message/error-message.view";
-import { Icon } from "src/views/shared/icon/icon.view";
+// import { Icon } from "src/views/shared/icon/icon.view";
 import { Spinner } from "src/views/shared/spinner/spinner.view";
 import { TokenBalance } from "src/views/shared/token-balance/token-balance.view";
 import { Typography } from "src/views/shared/typography/typography.view";
@@ -105,7 +105,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
         )
       );
       if (selectedChains && tokenToRemove.address === token?.address) {
-        setToken(getEtherToken(selectedChains.from));
+        setToken(getGasToken(selectedChains.from));
       }
     }
   };
@@ -124,7 +124,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
 
   const getTokenBalance = useCallback(
     (token: Token, chain: Chain): Promise<BigNumber> => {
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, chain)) {
         return chain.provider.getBalance(account);
       } else {
         return getErc20TokenBalance({
@@ -141,7 +141,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
     // Load all the tokens for the selected chain without their balance
     if (selectedChains && defaultTokens) {
       const { from } = selectedChains;
-      const chainTokens = [...getChainCustomTokens(from), ...defaultTokens];
+      const chainTokens = [ ...defaultTokens, ...getChainCustomTokens(from)];
 
       setTokens(
         chainTokens.map((token) => ({
@@ -243,7 +243,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
 
       if (from && to) {
         setSelectedChains({ from, to });
-        setToken(getEtherToken(from));
+        setToken(getGasToken(from.key === "ethereum" ? to : from));
       }
       setAmount(undefined);
     }
@@ -268,7 +268,9 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
       </div>
     );
   }
+  
 
+  const symbol = isWETH(token, selectedChains.from.key) ? "WETH" : token.symbol;
   return (
     <form className={classes.form} onSubmit={onFormSubmit}>
       <Card className={classes.card}>
@@ -288,6 +290,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
           <div className={classes.rightBox}>
             <Typography type="body2">Balance</Typography>
             <TokenBalance
+              chainId={selectedChains.from.key}
               spinnerSize={14}
               token={{ ...token, balance: balanceFrom }}
               typographyProps={{ type: "body1" }}
@@ -296,8 +299,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
         </div>
         <div className={`${classes.row} ${classes.middleRow}`}>
           <button className={classes.tokenSelector} onClick={onTokenDropdownClick} type="button">
-            <Icon isRounded size={24} url={token.logoURI} />
-            <Typography type="h2">{token.symbol}</Typography>
+            <Typography type="h2">{symbol}</Typography>
             <CaretDown />
           </button>
           <AmountInput
@@ -327,6 +329,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
           <div className={classes.rightBox}>
             <Typography type="body2">Balance</Typography>
             <TokenBalance
+              chainId={selectedChains.to.key}
               spinnerSize={14}
               token={{ ...token, balance: balanceTo }}
               typographyProps={{ type: "body1" }}

@@ -17,7 +17,7 @@ import * as ethereum from "src/adapters/ethereum";
 import { cleanupCustomTokens, getCustomTokens } from "src/adapters/storage";
 import { getEthereumErc20Tokens } from "src/adapters/tokens";
 import tokenIconDefaultUrl from "src/assets/icons/tokens/erc20-icon.svg";
-import { getEtherToken } from "src/constants";
+import { getEtherToken, getGasToken } from "src/constants";
 import { useEnvContext } from "src/contexts/env.context";
 import { useErrorContext } from "src/contexts/error.context";
 import { useProvidersContext } from "src/contexts/providers.context";
@@ -99,7 +99,7 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
    */
   const computeWrappedTokenAddress = useCallback(
     ({ nativeChain, otherChain, token }: ComputeWrappedTokenAddressParams): Promise<string> => {
-      if (isTokenEther(token)) {
+      if (isTokenEther(token, nativeChain)) {
         throw Error("Can't precalculate the wrapper address of Ether");
       }
       const bridgeContract = Bridge__factory.connect(
@@ -147,7 +147,7 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
    */
   const addWrappedToken = useCallback(
     ({ token }: AddWrappedTokenParams): Promise<Token> => {
-      if (token.wrappedToken || isTokenEther(token)) {
+      if (token.wrappedToken) {
         return Promise.resolve(token);
       } else {
         if (!env) {
@@ -247,7 +247,7 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
       }
       const token = [
         ...getCustomTokens(),
-        ...(tokens || [getEtherToken(chain)]),
+        ...(tokens || [getGasToken(chain)]),
         ...fetchedTokens.current,
       ].find(
         (token) =>
@@ -313,6 +313,7 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
   useEffect(() => {
     if (env) {
       const ethereumChain = env.chains[0];
+      const polygonZkEVMChain = env.chains[1];
       getEthereumErc20Tokens()
         .then((ethereumErc20Tokens) =>
           Promise.all(
@@ -321,7 +322,12 @@ const TokensProvider: FC<PropsWithChildren> = (props) => {
               .map((token) => addWrappedToken({ token }))
           )
             .then((chainTokens) => {
-              const tokens = [getEtherToken(ethereumChain), ...chainTokens];
+              const tokens = [];
+              const gasToken = getGasToken(polygonZkEVMChain)
+              if (!isTokenEther(gasToken, ethereumChain)) {
+                tokens.push(gasToken)
+              }
+              tokens.push(getEtherToken(ethereumChain), ...chainTokens)
               cleanupCustomTokens(tokens);
               setTokens(tokens);
             })
