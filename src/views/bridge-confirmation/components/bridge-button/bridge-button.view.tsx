@@ -31,7 +31,7 @@ export const BridgeButton: FC<BridgeButtonProps> = ({
       case "pending": {
         return (
           <Button onClick={onApprove}>
-            {`Allow Bridge to spend my ${token.name}`}
+            {`Allow Bridge to spend my ${token.symbol}`}
           </Button>
         );
       }
