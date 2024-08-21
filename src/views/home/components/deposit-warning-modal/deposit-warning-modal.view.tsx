@@ -35,7 +35,7 @@ export const DepositWarningModal: FC<DepositWarningModalProps> = ({
       <div className={classes.background}>
         <Card className={classes.card}>
           <Typography className={classes.title} type="h1">
-            Warning
+            Notice
           </Typography>
           <Typography className={classes.warningText} type="body1">
             You are about to transfer tokens using the{" "}
