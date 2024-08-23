@@ -47,7 +47,7 @@ export const Activity: FC = () => {
   const [areBridgesDisabled, setAreBridgesDisabled] = useState<boolean>(false);
   const classes = useActivityStyles();
 
-  const fetchBridgesAbortController = useRef<AbortController>(new AbortController());
+  const fetchBridgesAbortController = useRef<AbortController | null>(null);
 
   const headerBorderObserved = useRef<HTMLDivElement>(null);
   const headerBorderTarget = useRef<HTMLDivElement>(null);
@@ -106,9 +106,10 @@ export const Activity: FC = () => {
   };
 
   const processFetchBridgesSuccess = useCallback(
-    (bridges: Bridge[]) => {
+    (bridges: Bridge[], total: number) => {
       setLastLoadedItem(bridges.length);
       setApiBridges({ data: bridges, status: "successful" });
+      setTotal(total);
       getPendingBridges(bridges)
         .then((data) => {
           callIfMounted(() => {
@@ -149,18 +150,22 @@ export const Activity: FC = () => {
       setApiBridges({ data: apiBridges.data, status: "loading-more-items" });
 
       // A new page requested by the user cancels any other fetch in progress
-      fetchBridgesAbortController.current.abort();
+      if (fetchBridgesAbortController.current) {
+        fetchBridgesAbortController.current.abort();
+      }
+
+      fetchBridgesAbortController.current = new AbortController();
 
       fetchBridges({
         env,
         ethereumAddress: connectedProvider.data.account,
         quantity: lastLoadedItem + PAGE_SIZE,
         type: "reload",
+        abortSignal: fetchBridgesAbortController.current.signal,
       })
         .then(({ bridges, total }) => {
           callIfMounted(() => {
-            processFetchBridgesSuccess(bridges);
-            setTotal(total);
+            processFetchBridgesSuccess(bridges, total);
           });
         })
         .catch(processFetchBridgesError);
@@ -170,6 +175,9 @@ export const Activity: FC = () => {
   useEffect(() => {
     // Initial API load
     if (env && connectedProvider.status === "successful" && tokens) {
+      if (fetchBridgesAbortController.current) {
+        fetchBridgesAbortController.current.abort();
+      }
       fetchBridgesAbortController.current = new AbortController();
       fetchBridges({
         abortSignal: fetchBridgesAbortController.current.signal,
@@ -181,14 +189,15 @@ export const Activity: FC = () => {
       })
         .then(({ bridges, total }) => {
           callIfMounted(() => {
-            processFetchBridgesSuccess(bridges);
-            setTotal(total);
+            processFetchBridgesSuccess(bridges, total);
           });
         })
         .catch(processFetchBridgesError);
     }
     return () => {
-      fetchBridgesAbortController.current.abort();
+      if (fetchBridgesAbortController.current) {
+        fetchBridgesAbortController.current.abort();
+      }
     };
   }, [
     connectedProvider,
@@ -213,6 +222,11 @@ export const Activity: FC = () => {
             ? { data: apiBridges.data, status: "reloading" }
             : { status: "loading" }
         );
+
+        if (fetchBridgesAbortController.current) {
+          fetchBridgesAbortController.current.abort();
+        }
+
         fetchBridgesAbortController.current = new AbortController();
         fetchBridges({
           abortSignal: fetchBridgesAbortController.current.signal,
@@ -223,8 +237,7 @@ export const Activity: FC = () => {
         })
           .then(({ bridges, total }) => {
             callIfMounted(() => {
-              processFetchBridgesSuccess(bridges);
-              setTotal(total);
+              processFetchBridgesSuccess(bridges, total);
             });
           })
           .catch(processFetchBridgesError);
@@ -233,6 +246,9 @@ export const Activity: FC = () => {
 
       return () => {
         clearInterval(intervalId);
+        if (fetchBridgesAbortController.current) {
+          fetchBridgesAbortController.current.abort();
+        }
       };
     }
   }, [
@@ -328,9 +344,8 @@ export const Activity: FC = () => {
           All
         </Typography>
         <Typography
-          className={`${classes.filterNumberBox} ${
-            displayAll ? classes.filterNumberBoxSelected : ""
-          }`}
+          className={`${classes.filterNumberBox} ${displayAll ? classes.filterNumberBoxSelected : ""
+            }`}
           type="body2"
         >
           {all}
@@ -344,9 +359,8 @@ export const Activity: FC = () => {
           Pending
         </Typography>
         <Typography
-          className={`${classes.filterNumberBox} ${
-            !displayAll ? classes.filterNumberBoxSelected : ""
-          }`}
+          className={`${classes.filterNumberBox} ${!displayAll ? classes.filterNumberBoxSelected : ""
+            }`}
           type="body2"
         >
           {pending}
