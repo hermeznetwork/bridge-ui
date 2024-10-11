@@ -6,6 +6,7 @@ import { StrictSchema } from "src/utils/type-safety";
 
 interface Env {
   VITE_BRIDGE_API_URL: string;
+  VITE_CHAIN_ICON_URL?: string;
   VITE_ENABLE_DEPOSIT_WARNING: string;
   VITE_ENABLE_FIAT_EXCHANGE_RATES: string;
   VITE_ENABLE_OUTDATED_NETWORK_MODAL?: string;
@@ -160,6 +161,7 @@ const getReportFormEnv = ({
 
 const envToDomain = ({
   VITE_BRIDGE_API_URL,
+  VITE_CHAIN_ICON_URL,
   VITE_ENABLE_DEPOSIT_WARNING,
   VITE_ENABLE_FIAT_EXCHANGE_RATES,
   VITE_ENABLE_OUTDATED_NETWORK_MODAL,
@@ -204,6 +206,7 @@ const envToDomain = ({
   const faviconPath = VITE_FAVICON_PATH;
   const networkName = VITE_NETWORK_NAME;
   const networkSymbol = VITE_NETWORK_SYMBOL;
+  const chainIconPath = VITE_CHAIN_ICON_URL;
 
   const outdatedNetworkModal: domain.Env["outdatedNetworkModal"] = isOutdatedNetworkModalEnabled
     ? {
@@ -242,6 +245,7 @@ const envToDomain = ({
 
     return {
       bridgeApiUrl,
+      chainIconPath,
       chains,
       faviconPath,
       fiatExchangeRates: getFiatExchangeRatesEnv({
@@ -272,6 +276,7 @@ const envParser = StrictSchema<Env, domain.Env>()(
   z
     .object({
       VITE_BRIDGE_API_URL: z.string().url(),
+      VITE_CHAIN_ICON_URL: z.string().optional(),
       VITE_ENABLE_DEPOSIT_WARNING: z.string(),
       VITE_ENABLE_FIAT_EXCHANGE_RATES: z.string(),
       VITE_ENABLE_OUTDATED_NETWORK_MODAL: z.string().optional(),
