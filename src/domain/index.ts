@@ -2,7 +2,7 @@ import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { ComponentType } from "react";
 
-export type ChainKey = "ethereum" | "polygon-zkevm";
+export type ChainKey = "ethereum" | "polygon-zkevm" | "gpt" | "lumia";
 
 export interface CommonChain {
   Icon: ComponentType<{ className?: string }>;
@@ -24,6 +24,14 @@ export interface CommonChain {
   provider: JsonRpcProvider;
 }
 
+export type GptChain = CommonChain & {
+  key: "gpt";
+};
+
+export type LumiaChain = CommonChain & {
+  key: "lumia";
+};
+
 export type EthereumChain = CommonChain & {
   key: "ethereum";
   poeContractAddress: string;
@@ -34,7 +42,7 @@ export type ZkEVMChain = CommonChain & {
   key: "polygon-zkevm";
 };
 
-export type Chain = EthereumChain | ZkEVMChain;
+export type Chain = EthereumChain | ZkEVMChain | GptChain | LumiaChain;
 
 export interface ConnectedProvider {
   account: string;
@@ -72,7 +80,7 @@ export interface ReportFormEnvEnabled {
 
 export interface Env {
   bridgeApiUrl: string;
-  chains: [EthereumChain, ZkEVMChain];
+  chains: [EthereumChain, ZkEVMChain, GptChain, LumiaChain];
   faviconPath?: string;
   fiatExchangeRates:
     | {
