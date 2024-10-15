@@ -16,7 +16,7 @@ export const Chain: FC<ChainProps> = ({ chain, className }) => {
   const classes = useChainStyles();
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const chainIconUrl = import.meta.env.VITE_CHAIN_ICON_URL;
+  const chainIconUrl = import.meta.env.VITE_ICON_PATH;
 
   const renderChainIcon = () => {
     switch (chain.key) {
