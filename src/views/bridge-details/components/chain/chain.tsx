@@ -40,15 +40,15 @@ export const Chain: FC<ChainProps> = ({ chain, className }) => {
 
   return (
     <Typography className={className} type="body1">
-      {chainIconUrl ? (
+      {renderChainIcon() ? (
+        renderChainIcon()
+      ) : (
         <img
           alt={chain.name}
           className={classes.chainIcon}
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           src={chainIconUrl}
         />
-      ) : (
-        renderChainIcon()
       )}
       {chain.name}
     </Typography>

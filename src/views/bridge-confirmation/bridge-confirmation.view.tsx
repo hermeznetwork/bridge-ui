@@ -63,6 +63,8 @@ export const BridgeConfirmation: FC = () => {
     status: "pending",
   });
   const currencySymbol = getCurrencySymbol(getCurrency());
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const logoPath: string = import.meta.env.VITE_LOGO_PATH;
 
   useEffect(() => {
     if (
@@ -429,7 +431,16 @@ export const BridgeConfirmation: FC = () => {
     <div className={classes.contentWrapper}>
       <Header backTo={{ routeKey: "home" }} title="Confirm Bridge" />
       <Card className={classes.card}>
-        <Icon className={classes.tokenIcon} isRounded size={46} url={token.logoURI} />
+        {token.logoURI ? (
+          <Icon className={classes.tokenIcon} isRounded size={20} url={token.logoURI} />
+        ) : (
+          <img
+            alt={token.name}
+            className={classes.tokenIcon}
+            src={token.logoURI}
+            style={{ borderRadius: "50%", height: 46, width: 46 }}
+          />
+        )}
         <Typography type="h1">{tokenAmountString}</Typography>
         {fiatAmountString && (
           <Typography className={classes.fiat} type="body2">

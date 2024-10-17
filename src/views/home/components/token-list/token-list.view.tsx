@@ -51,6 +51,9 @@ export const TokenList: FC<TokenListProps> = ({
   });
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const logoPath: string = import.meta.env.VITE_LOGO_PATH;
+
   const getTokenBalance = useCallback(
     (token: Token, chain: Chain): Promise<BigNumber> => {
       if (isTokenEther(token, chain)) {
@@ -219,7 +222,12 @@ export const TokenList: FC<TokenListProps> = ({
                     role="button"
                   >
                     <div className={classes.tokenInfo}>
-                      <Icon className={classes.tokenIcon} isRounded size={24} url={token.logoURI} />
+                      <Icon
+                        className={classes.tokenIcon}
+                        isRounded
+                        size={24}
+                        url={logoPath || token.logoURI}
+                      />
                       <Typography type="body1">{token.name}</Typography>
                     </div>
                   </button>
@@ -243,7 +251,9 @@ export const TokenList: FC<TokenListProps> = ({
                     role="button"
                   >
                     <div className={classes.tokenInfoWithBalance}>
-                      <Typography type="body1">{token.name === "ETH" ? "Native Token" : token.name}</Typography>
+                      <Typography type="body1">
+                        {token.name === "ETH" ? "Native Token" : token.name}
+                      </Typography>
                       <div className={classes.tokenBalanceWrapper}>
                         <TokenBalance
                           chainId={chains.from.key}

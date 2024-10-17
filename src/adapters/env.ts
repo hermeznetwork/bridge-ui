@@ -256,6 +256,7 @@ const envToDomain = ({
         VITE_FIAT_EXCHANGE_RATES_ETHEREUM_USDC_ADDRESS,
       }),
       forceUpdateGlobalExitRootForL1,
+      iconPath,
       isDepositWarningEnabled,
       logoPath,
       networkName,

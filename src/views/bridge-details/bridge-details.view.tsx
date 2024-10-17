@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { BigNumber } from "ethers";
 import { FC, useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
@@ -71,6 +72,8 @@ export const BridgeDetails: FC = () => {
   const currencySymbol = getCurrencySymbol(getCurrency());
 
   const classes = useBridgeDetailsStyles();
+
+  const logoPath: string = import.meta.env.VITE_LOGO_PATH;
 
   const onClaim = () => {
     if (bridge.status === "successful" && bridge.data.status === "on-hold") {
@@ -277,7 +280,7 @@ export const BridgeDetails: FC = () => {
       const { step1: step1FiatFee, step2: step2FiatFee } = fiatFees;
 
       const gasTokenFrom = getGasToken(from);
-      const gasTokenTo = getGasToken(to)
+      const gasTokenTo = getGasToken(to);
 
       if (env === undefined) {
         return null;
@@ -289,12 +292,16 @@ export const BridgeDetails: FC = () => {
         ? `${currencySymbol}${fiatAmount ? formatFiatAmount(fiatAmount) : "--"}`
         : undefined;
 
-      const step1FeeString = `${step1EthFee ? formatTokenAmount(step1EthFee, gasTokenFrom) : "--"} ${gasTokenFrom.symbol}`;
+      const step1FeeString = `${
+        step1EthFee ? formatTokenAmount(step1EthFee, gasTokenFrom) : "--"
+      } ${gasTokenFrom.symbol}`;
       const step1FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step1FiatFee ? formatFiatAmount(step1FiatFee) : "--"}`
         : undefined;
 
-      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, gasTokenTo) : "--"} ${gasTokenTo.symbol}`;
+      const step2FeeString = `${step2EthFee ? formatTokenAmount(step2EthFee, gasTokenTo) : "--"} ${
+        gasTokenTo.symbol
+      }`;
       const step2FiatFeeString = env.fiatExchangeRates.areEnabled
         ? `${currencySymbol}${step2FiatFee ? formatFiatAmount(step2FiatFee) : "--"}`
         : undefined;
@@ -313,7 +320,16 @@ export const BridgeDetails: FC = () => {
           <Header backTo={{ routeKey: "activity" }} title="Bridge Details" />
           <Card className={classes.card}>
             <div className={classes.balance}>
-              <Icon className={classes.tokenIcon} isRounded size={48} url={token.logoURI} />
+              {token.logoURI ? (
+                <Icon className={classes.tokenIcon} isRounded size={20} url={token.logoURI} />
+              ) : (
+                <img
+                  alt={token.name}
+                  className={classes.tokenIcon}
+                  src={token.logoURI}
+                    style={{ borderRadius: "50%", height: 48, width: 48 }}
+                />
+              )}
               <Typography type="h1">{tokenAmountString}</Typography>
               <Typography className={classes.fiat} type="h2">
                 {fiatAmountString}
