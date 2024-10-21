@@ -141,7 +141,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
     // Load all the tokens for the selected chain without their balance
     if (selectedChains && defaultTokens) {
       const { from } = selectedChains;
-      const chainTokens = [ ...defaultTokens, ...getChainCustomTokens(from)];
+      const chainTokens = [...defaultTokens, ...getChainCustomTokens(from)];
 
       setTokens(
         chainTokens.map((token) => ({
@@ -268,7 +268,6 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
       </div>
     );
   }
-  
 
   const symbol = isWETH(token, selectedChains.from.key) ? "WETH" : token.symbol;
   return (

@@ -16,26 +16,23 @@ export const Chain: FC<ChainProps> = ({ chain, className }) => {
   const classes = useChainStyles();
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const chainIconUrl = import.meta.env.VITE_ICON_PATH;
+  const chainIconUrl = import.meta.env.VITE_CHAIN_ICON_PATH;
 
   const renderChainIcon = () => {
-    switch (chain.key) {
-      case "ethereum": {
-        return <EthChainIcon />;
-      }
-      case "polygon-zkevm": {
-        return <PolygonZkEVMChainIcon className={classes.chainIcon} />;
-      }
-      case "gpt": {
-        return <img alt="GPT" className={classes.chainIcon} src={GptIcon} />;
-      }
-      case "lumia": {
-        return <Lumia className={classes.chainIcon} />;
-      }
-      default: {
-        return null;
-      }
+    if (chain.key === "ethereum") {
+      return <EthChainIcon />;
     }
+    if (chainIconUrl) {
+      return (
+        <img
+          alt={chain.name}
+          className={classes.chainIcon}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          src={chainIconUrl}
+        />
+      );
+    }
+    return <PolygonZkEVMChainIcon className={classes.chainIcon} />;
   };
 
   return (

@@ -109,6 +109,9 @@ export const getChains = ({
     polygonZkEVM.bridgeContractAddress,
     polygonZkEVMProvider
   );
+  if (import.meta.env.VITE_CHAIN_ICON_PATH) {
+    polygonZkEVM.iconUrl = import.meta.env.VITE_CHAIN_ICON_PATH;
+  }
 
   return Promise.all([
     ethereumProvider.getNetwork().catch(() => Promise.reject(ProviderError.Ethereum)),
@@ -129,41 +132,41 @@ export const getChains = ({
       wethToken,
       metadata,
     ]) => [
-      {
-        bridgeContractAddress: ethereum.bridgeContractAddress,
-        chainId: ethereumNetwork.chainId,
-        explorerUrl: ethereum.explorerUrl,
-        Icon: EthChainIcon,
-        key: "ethereum",
-        name: getEthereumNetworkName(ethereumNetwork.chainId),
-        nativeCurrency: {
-          decimals: 18,
-          name: "Ether",
-          symbol: "ETH",
-          wrapped: { address: wethToken, chainId: polygonZkEVMNetwork.chainId },
+        {
+          bridgeContractAddress: ethereum.bridgeContractAddress,
+          chainId: ethereumNetwork.chainId,
+          explorerUrl: ethereum.explorerUrl,
+          Icon: EthChainIcon,
+          key: "ethereum",
+          name: getEthereumNetworkName(ethereumNetwork.chainId),
+          nativeCurrency: {
+            decimals: 18,
+            name: "Ether",
+            symbol: "ETH",
+            wrapped: { address: wethToken, chainId: polygonZkEVMNetwork.chainId },
+          },
+          networkId: 0,
+          poeContractAddress: ethereum.poeContractAddress,
+          provider: ethereumProvider,
+          rollupManagerAddress: ethereum.rollupManagerAddress,
         },
-        networkId: 0,
-        poeContractAddress: ethereum.poeContractAddress,
-        provider: ethereumProvider,
-        rollupManagerAddress: ethereum.rollupManagerAddress,
-      },
-      {
-        bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
-        chainId: polygonZkEVMNetwork.chainId,
-        explorerUrl: polygonZkEVM.explorerUrl,
-        Icon: polygonZkEVM.iconUrl ? L2Icon(polygonZkEVM.iconUrl) : PolygonZkEVMChainIcon,
-        key: "polygon-zkevm",
-        name: polygonZkEVMNetworkName,
-        nativeCurrency: {
-          decimals: metadata.decimals,
-          name: metadata.name,
-          symbol: metadata.symbol,
-          wrapped: { address: gasToken, chainId: ethereumNetwork.chainId },
+        {
+          bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
+          chainId: polygonZkEVMNetwork.chainId,
+          explorerUrl: polygonZkEVM.explorerUrl,
+          Icon: polygonZkEVM.iconUrl ? L2Icon(polygonZkEVM.iconUrl) : PolygonZkEVMChainIcon,
+          key: "polygon-zkevm",
+          name: polygonZkEVMNetworkName,
+          nativeCurrency: {
+            decimals: metadata.decimals,
+            name: metadata.name,
+            symbol: metadata.symbol,
+            wrapped: { address: gasToken, chainId: ethereumNetwork.chainId },
+          },
+          networkId: polygonZkEVM.networkId,
+          provider: polygonZkEVMProvider,
         },
-        networkId: polygonZkEVM.networkId,
-        provider: polygonZkEVMProvider,
-      },
-    ]
+      ]
   );
 };
 
