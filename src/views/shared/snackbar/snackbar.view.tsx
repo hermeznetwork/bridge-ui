@@ -14,7 +14,7 @@ interface SnackbarProps {
   reportForm: Env["reportForm"];
 }
 
-export const Snackbar: FC<SnackbarProps> = ({ message, onClose, onReport, reportForm }) => {
+export const Snackbar: FC<SnackbarProps> = ({ message, onClose }) => {
   const classes = useSnackbarStyles();
 
   const Icon = ({ message }: { message: Message }): JSX.Element => {
@@ -46,27 +46,14 @@ export const Snackbar: FC<SnackbarProps> = ({ message, onClose, onReport, report
       </div>
     );
   } else {
-    const { parsed, text } = message;
 
     return (
       <div className={classes.root}>
         <div className={classes.wrapper}>
           <Icon message={message} />
           <p className={classes.message}>
-            {text || reportForm.isEnabled
-              ? "An error occurred. Would you mind reporting it?"
-              : "An error occurred. You can see the details in the console"}
+            An error occurred
           </p>
-          {reportForm.isEnabled && (
-            <button
-              className={classes.reportButton}
-              onClick={() => {
-                onReport(parsed, reportForm);
-              }}
-            >
-              Report
-            </button>
-          )}
           <button className={classes.closeButton} onClick={onClose}>
             <CloseIcon className={classes.closeIcon} />
           </button>
