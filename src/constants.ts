@@ -9,6 +9,7 @@ import { Chain, Currency, EthereumChain, ProviderError, Token, ZkEVMChain } from
 import { Bridge__factory } from "src/types/contracts/bridge";
 import { ProofOfEfficiency__factory } from "src/types/contracts/proof-of-efficiency";
 import { getEthereumNetworkName } from "src/utils/labels";
+import { loadEnv } from "./adapters/env";
 
 export const DAI_PERMIT_TYPEHASH =
   "0xea2aa0a1be11a07ed86d755c93467f4f82362b452371d1ba94d1715123511acb";
@@ -113,6 +114,12 @@ export const getChains = ({
     polygonZkEVM.iconUrl = import.meta.env.VITE_CHAIN_ICON_PATH;
   }
 
+  // set env vars to be used as consts here
+  let networkName = ""
+  loadEnv().then(vars => {
+    networkName = vars?.networkName || "";
+  }).catch(console.error);
+
   return Promise.all([
     ethereumProvider.getNetwork().catch(() => Promise.reject(ProviderError.Ethereum)),
     polygonZkEVMProvider.getNetwork().catch(() => Promise.reject(ProviderError.PolygonZkEVM)),
@@ -156,7 +163,7 @@ export const getChains = ({
           explorerUrl: polygonZkEVM.explorerUrl,
           Icon: polygonZkEVM.iconUrl ? L2Icon(polygonZkEVM.iconUrl) : PolygonZkEVMChainIcon,
           key: "polygon-zkevm",
-          name: polygonZkEVMNetworkName,
+          name: networkName || polygonZkEVMNetworkName,
           nativeCurrency: {
             decimals: metadata.decimals,
             name: metadata.name,
